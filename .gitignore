@@ -1,0 +1,6 @@
+nwjs/
+node_modules/
+build/*
+.idea/
+!build/manifest.json
+!build/icon*.png

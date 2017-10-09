@@ -1,0 +1,15 @@
+.downloadAssBtn{
+    background: #f25d8e;
+    float: left;
+    height:48px;
+    line-height: 48px;
+    width: 128px;
+    border-radius: 8px;
+    margin-right: 20px;
+    cursor:pointer;
+    color: white;
+    text-align: center;
+}
+.downloadAssBtn:hover{
+    background: #f795b0;
+}
