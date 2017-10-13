@@ -102,19 +102,23 @@ export class DanmuItem{
 }
 
 export class DanmuApi{
-    getUserFilter(successCallback: UserFilterApiSuccessCallback, failCallback: GeneralResCallback): Promise<UserDanmuFilterResponse>{
+    getUserFilter(): Promise<UserDanmuFilterResponse>{
         return new Promise((successCallback: UserFilterApiSuccessCallback, failCallback: GeneralResCallback)=>{
-            Requests.apiGet(Api.userDanmuFilterUrl, null).then(successCallback).catch(failCallback)
+            Requests.apiGet(Api.userDanmuFilterUrl, null).then(successCallback, failCallback)
         })
     }
-    getDanmuXml(danmuId: string, successCallback: DanmuXmlSuccessCallback): void{
-        Requests.get(Api.danmuUrl(danmuId), null, (data)=>{
-            data.text().then((data: string)=>{
-                let domParser = new DOMParser()
-                let xmlDoc = domParser.parseFromString(data, "text/xml");
-                successCallback(xmlDoc);
-            })
-        })
+    getDanmuXml(danmuId: string): Promise<Document>{
+        return new Promise<Document>((successCallback: DanmuXmlSuccessCallback)=> {
+            Requests.get(Api.danmuUrl(danmuId))
+                .then((data) => {
+                    data.text().then((data: string) => {
+                        let domParser = new DOMParser();
+                        let xmlDoc = domParser.parseFromString(data, "text/xml");
+                        successCallback(xmlDoc);
+                    })
+                })
+            }
+        );
     }
     xmlToDanmus(xml: HTMLDocument): Array<DanmuItem>{
         let danmus: Array<DanmuItem> = [];

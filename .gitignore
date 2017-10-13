@@ -4,3 +4,4 @@ build/*
 .idea/
 !build/manifest.json
 !build/icon*.png
+!build/doc

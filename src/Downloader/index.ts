@@ -1,3 +1,4 @@
+import {Promise} from 'es6-promise'
 import * as Api from '../Config/api'
 import {DanmuApi, DanmuItem, DanmuPositionType} from '../Danmu'
 import ASS from '../Danmu/ass';
@@ -40,16 +41,19 @@ export default class Downloader{
         return blockDanmus.length <= 0;
 
     }
-    download(danmuId: string, successCallback?: DownloadAssSuccessCallback): void{
-        this.danmuApi.getDanmuXml(danmuId, (xmlDoc:Document)=>{
-            let danmus = this.danmuApi.xmlToDanmus(xmlDoc);
-            let ass = new ASS();
-            danmus.forEach((i)=>{
-                if (this.danmuFilter(i)){
-                    ass.addDanmuItem(i);
-                }
-            });
-            successCallback(ass.toString());
+    download(danmuId: string): Promise<string>{
+        return new Promise((successCallback: DownloadAssSuccessCallback)=> {
+            this.danmuApi.getDanmuXml(danmuId)
+                .then((xmlDoc: Document) => {
+                    let danmus = this.danmuApi.xmlToDanmus(xmlDoc);
+                    let ass = new ASS();
+                    danmus.forEach((i) => {
+                        if (this.danmuFilter(i)) {
+                            ass.addDanmuItem(i);
+                        }
+                    });
+                    successCallback(ass.toString());
+                })
         })
     }
 }

@@ -1,10 +1,10 @@
 
 import DanmuFilterConfig from "../../../Config/danmufilter";
 
-export interface DownloadCallback{
+export interface DownloadCompleteCallback{
     ():void;
 }
 
 export default interface CommonDownloader{
-    start(danmuFilterConfig: DanmuFilterConfig, startCallback?: DownloadCallback, completeCallback?: DownloadCallback): void;
+    start(danmuFilterConfig: DanmuFilterConfig, startCallback?: ()=>void):Promise<void>;
 }

@@ -18,15 +18,19 @@ export default class Bangumi{
     }
     getEpList(seasonId: string): Promise<Array<Api.EpItem>>{
         return new Promise<Array<Api.EpItem>>((successCallback: EpListApiSuceessCallback, failCallback: GeneralResCallback)=>{
-            Requests.apiGet(Api.eplistUrl(seasonId), null).then((res:Api.EplistResponse)=>{
-                successCallback(res.result);
-            }).catch(failCallback);
+            Requests.apiGet(Api.eplistUrl(seasonId), null)
+                .then(
+                    (res:Api.EplistResponse)=>{
+                        successCallback(res.result);
+                    }
+                    , failCallback
+                );
         });
 
     }
     getEpDetail(epId: number): Promise<Api.EpDetailResponse>{
         return new Promise(( successCallback: EpDetailSuccessCallback, failCallback: GeneralResCallback)=>{
-            Requests.apiGet(Api.epDetailUrl(epId), null).then(successCallback).catch(failCallback);
+            Requests.apiGet(Api.epDetailUrl(epId), null).then(successCallback, failCallback);
         })
     }
 }

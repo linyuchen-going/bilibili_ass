@@ -18,15 +18,19 @@ class EpListAssDownloadView extends InjectView<State>{
     }
 
     startDownload(){
-        this.setState({
-            showSettings: false,
-            downloadBtnText: "下载中...",
-        });
-        this.downloader.start(this.filterConfig, null, ()=>{
-            this.setState({
-                downloadBtnText: "下载全部弹幕"
+        this.downloader.start(this.filterConfig,
+            ()=>{
+                this.setState({
+                    showSettings: false,
+                    downloadBtnText: "下载中...",
+                });
             })
-        });
+            .then(()=>{
+                this.setState({
+                    downloadBtnText: "下载全部弹幕"
+                })
+            })
+
     }
     render(){
         return (

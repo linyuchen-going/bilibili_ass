@@ -12,26 +12,23 @@ interface ApiRes{
 
 class Requests{
     SUCCESS_CODE = 0;
-    get(url: string, params: any, cb: GeneralResCallback):void{
-        fetch(url, {credentials: 'include'}).then(cb)
+    get(url: string, params?: any){
+        return fetch(url, {credentials: 'include'})
     }
     checkApiRes(res: any): Promise<any>{
         return new Promise((successCallback: GeneralResCallback, failCallback: GeneralResCallback) => {
-            res.then((res: any)=>{
-              if (res.code === this.SUCCESS_CODE) {
-                    successCallback(res);
-                }
-                else {
-                    failCallback(res);
-                }
-            });
-
-        })
+            if (res.code === this.SUCCESS_CODE) {
+                successCallback(res);
+            }
+            else {
+                failCallback(res);
+            }
+        });
     }
     apiGet(url: string, params: any): Promise<any>{
         return new Promise((successCallback: GeneralResCallback, failCallback: GeneralResCallback)=>{
             fetch(url, {credentials: 'include'}).then((res)=>{
-                this.checkApiRes(res.json()).then(successCallback).catch(failCallback);
+                res.json().then(this.checkApiRes.bind(this)).then(successCallback,failCallback);
             })
         })
     }
@@ -48,7 +45,7 @@ class Requests{
                     }
                 }
             ).then((res) => {
-                this.checkApiRes(res.json()).then(successCallback).catch(failCallback);
+                res.json().then(this.checkApiRes).then(successCallback, failCallback)
             })
         })
     }

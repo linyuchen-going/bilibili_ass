@@ -35,8 +35,11 @@ export default class CommonView<D extends CommonData> extends React.Component<an
     }
 
     startDownload(){
-        this.setState({showSettings: false});
-        this.downloader.start(this.filterConfig);
+        this.downloader.start(this.filterConfig).then(
+            ()=>{
+                this.setState({showSettings: false});
+            }
+        );
     }
 
     renderSettings(){

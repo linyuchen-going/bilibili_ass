@@ -1,10 +1,11 @@
 /*
 对单个视频页注入
 * */
+import {Promise} from 'es6-promise'
 import * as Api from '../../../Config/api'
 import Downloader from '../../../Downloader/index'
 import DanmuFilterConfig from "../../../Config/danmufilter"
-import CommonDownloader from '../common/downloader'
+import CommonDownloader  from '../common/downloader'
 import Bangumi from '../../../Bangumi'
 let FileSave = require("file-saver");
 
@@ -19,20 +20,23 @@ export default class AssDownloader extends Downloader implements CommonDownloade
 
     save(danmuId: string, title: string): void{
         let saveAss = ()=>{
-            super.download(danmuId, (assText) => {
+            super.download(danmuId).then((assText) => {
                 let blob = new Blob([assText], {type: 'application/octet-stream'});
                 FileSave.saveAs(blob, `${title}.ass`);
             });
         };
-        this.danmuApi.getUserFilter((res: Api.UserDanmuFilterResponse) => {
-            this.filterRules = res.data.rule;
-            saveAss();
-        }, (res) => {
-            saveAss();
-        });
+        this.danmuApi.getUserFilter()
+            .then((res: Api.UserDanmuFilterResponse) => {
+                this.filterRules = res.data.rule;
+                saveAss();
+            },
+            (res) => {
+                saveAss();
+            }
+        );
     }
 
-    public start(danmuFilterConfig: DanmuFilterConfig=null):void{
+    public start(danmuFilterConfig: DanmuFilterConfig=null): Promise<void>{
         if (danmuFilterConfig){
             this.setDanmuFilterConfig(danmuFilterConfig)
         }
@@ -40,6 +44,8 @@ export default class AssDownloader extends Downloader implements CommonDownloade
         let dataEle = this.getInjectData();
         document.body.removeChild(jsEle);
         document.body.removeChild(dataEle);
+
+
         if(this.danmuId){
             this.save.call(this, this.danmuId, this.videoName);
         }
@@ -57,7 +63,9 @@ export default class AssDownloader extends Downloader implements CommonDownloade
                     })
             }
         }
-
+        return new Promise<void>((completeCallback: ()=>void)=>{
+            completeCallback();
+        });
     }
 
     private injectDataEle(): HTMLElement{
